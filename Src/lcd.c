@@ -10,11 +10,11 @@ void sendData(LCD1602 *scr , uint8_t *pData)
   *pData |= (1<<2);// устанавливаем стробирующий сигнал E в 1
   while(HAL_I2C_Master_Transmit(scr->hi2c,scr->DevAddress,pData,1,1000)!=HAL_OK)
   {}
-  HAL_Delay(5); 
+  HAL_Delay(1);
   *pData &=~(1<<2);// устанавливаем стробирующий сигнал E в 0
   while(HAL_I2C_Master_Transmit(scr->hi2c,scr->DevAddress,pData,1,1000)!=HAL_OK)
   {}
-  HAL_Delay(5);
+  HAL_Delay(1);
 }
 // initLCD функция начальной инициализации дисплея
 // выполняет инструкции инициализации дисплея для четырехбитного интерфейса в соответствии с плгоритмом из datasheet

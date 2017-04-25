@@ -63,6 +63,7 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN 0 */
 	uint32_t progtime;
 	int count;
+	int sw_button;
 /* USER CODE END 0 */
 
 int main(void)
@@ -72,6 +73,7 @@ int main(void)
 
 	char message[15]="";
 	count = 0;
+	sw_button = 0;
 
 
   LCD1602 scr;
@@ -94,12 +96,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
   progtime = HAL_GetTick();
   initLCD(&scr);
-  //moveXY(&scr,4,0);
-  //writeStringLCD(&scr,"Count=");
-
-  //moveXY(&scr,11,0);
-  //writeStringLCD(&scr,"n");
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -109,28 +105,18 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-  //HAL_Delay(300);
-  /*if (first == 'c' && second=='d')
-  {
-	  count--;
-	  first = 0;
-	  second = 0;
-  }
-  if (first=='d' && second=='c')
-  {
-	  count++;
-	  first=0;
-	  second = 0;
-  }*/
+
   sprintf(message,"Count = %d   ",count);
   moveXY(&scr,1,0);
   writeStringLCD(&scr,message);
 
-
-
-
-
-   
+  moveXY(&scr,1,1);
+  if (sw_button == 1)
+  {
+	  writeStringLCD(&scr,"pressed    ");
+  }
+  else
+	  writeStringLCD(&scr,"not pressed");
 
   }
   /* USER CODE END 3 */
@@ -209,6 +195,12 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+  /*Configure GPIO pin : PA4 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : PA7 */
   GPIO_InitStruct.Pin = GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
@@ -222,6 +214,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
